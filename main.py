@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 import pandas as pd
 import pickle
-import sklearn
 
 app = Flask(__name__)
 data = pd.read_csv('final_dataset.csv')
@@ -57,7 +56,7 @@ def index():
     bedrooms = sorted(data['beds'].unique())
     bathrooms = sorted(data['baths'].unique())
     sizes = sorted(data['size'].unique())
-    #zip_codes = sorted(data['zip_code'].unique())
+    zip_codes = sorted(data['zip_code'].unique())
 
     return render_template('index.html', bedrooms=bedrooms, bathrooms=bathrooms, sizes=sizes, zip_codes=zip_codes)
 
@@ -66,11 +65,11 @@ def predict():
     bedrooms = request.form.get('beds')
     bathrooms = request.form.get('baths')
     size = request.form.get('size')
-    #zipcode = request.form.get('zip_code')
+    zipcode = request.form.get('zip_code')
 
     # Create a DataFrame with the input data
     input_data = pd.DataFrame([[bedrooms, bathrooms, size, zipcode]],
-                               columns=['beds', 'baths', 'size', ])
+                               columns=['beds', 'baths', 'size', 'zip_code'])
 
     print("Input Data:")
     print(input_data)
@@ -79,7 +78,7 @@ def predict():
     input_data['baths'] = pd.to_numeric(input_data['baths'], errors='coerce')
 
     # Convert input data to numeric types
-    input_data = input_data.astype({'beds': int, 'baths': float, 'size': float,  int})
+    input_data = input_data.astype({'beds': int, 'baths': float, 'size': float, 'zip_code': int})
 
     # Handle unknown categories in the input data
     for column in input_data.columns:
